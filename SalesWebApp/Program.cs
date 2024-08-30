@@ -1,3 +1,6 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using SalesWebApp.Data;
 namespace SalesWebApp
 {
     public class Program
@@ -5,6 +8,8 @@ namespace SalesWebApp
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<SalesWebAppContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SalesWebAppContext") ?? throw new InvalidOperationException("Connection string 'SalesWebAppContext' not found.")));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
