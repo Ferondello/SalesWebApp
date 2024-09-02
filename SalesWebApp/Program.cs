@@ -1,6 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using SalesWebApp.Data;
+
 namespace SalesWebApp
 {
     public class Program
@@ -9,7 +19,7 @@ namespace SalesWebApp
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<SalesWebAppContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("SalesWebAppContext") ?? throw new InvalidOperationException("Connection string 'SalesWebAppContext' not found.")));
+                options.UseMySql(builder.Configuration.GetConnectionString("SalesWebAppContext"), new MySqlServerVersion(new Version(8,0)), builder => builder.MigrationsAssembly("SalesWebApp")));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -37,5 +47,6 @@ namespace SalesWebApp
 
             app.Run();
         }
+        
     }
 }
