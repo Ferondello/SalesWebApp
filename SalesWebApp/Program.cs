@@ -19,13 +19,13 @@ namespace SalesWebApp
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<SalesWebAppContext>(options =>
-                options.UseMySql(builder.Configuration.GetConnectionString("SalesWebAppContext"), new MySqlServerVersion(new Version(8,0)), builder => builder.MigrationsAssembly("SalesWebApp")));
+                options.UseMySql(builder.Configuration.GetConnectionString("SalesWebAppContext"), new MySqlServerVersion(new Version(8, 0)), builder => builder.MigrationsAssembly("SalesWebApp")));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
-
+            
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -33,7 +33,7 @@ namespace SalesWebApp
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -45,8 +45,14 @@ namespace SalesWebApp
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<SalesWebAppContext>();
+            SeedingService seedingService = new SeedingService( context );
+            seedingService.Seed();
+
             app.Run();
         }
-        
+
     }
 }
