@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SalesWebApp.Data;
+using SalesWebApp.Services;
 
 namespace SalesWebApp
 {
@@ -23,6 +24,9 @@ namespace SalesWebApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<SeedingService>();
+            builder.Services.AddScoped<SellerService>();
 
             var app = builder.Build();
             
@@ -44,6 +48,8 @@ namespace SalesWebApp
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            
 
             using var scope = app.Services.CreateScope();
             var services = scope.ServiceProvider;
