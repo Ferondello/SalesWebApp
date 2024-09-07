@@ -1,5 +1,6 @@
 ﻿using SalesWebApp.Data;
 using SalesWebApp.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace SalesWebApp.Services
 {
@@ -25,7 +26,7 @@ namespace SalesWebApp.Services
         }
         public Seller FindById (int id)
         {
-            return _context.Seller.FirstOrDefault(obj => obj.Id == id);
+            return _context.Seller.Include(obj => obj.Department).FirstOrDefault(obj => obj.Id == id);
         }
         public void Remove(int id)
         {
