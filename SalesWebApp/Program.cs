@@ -4,6 +4,8 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +32,16 @@ namespace SalesWebApp
             builder.Services.AddScoped<DepartmentService>();
 
             var app = builder.Build();
-            
+
+            var enUs = new CultureInfo("en-US");
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(enUs),
+                SupportedCultures = new List<CultureInfo> { enUs },
+                SupportedUICultures = new List<CultureInfo> { enUs },
+            };
+
+            app.UseRequestLocalization(localizationOptions);
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
