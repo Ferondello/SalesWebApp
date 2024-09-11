@@ -4,7 +4,7 @@ using SalesWebApp.Models.ViewModels;
 using SalesWebApp.Services;
 using SalesWebApp.Services.Exceptions;
 using System.Diagnostics;
-
+using SalesWebApp.Services.Exceptions;
 namespace SalesWebApp.Controllers
 {
     public class SellersController : Controller
@@ -63,8 +63,15 @@ namespace SalesWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _sellerService.RemoveAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _sellerService.RemoveAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch(IntegrityException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+            }
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -94,7 +101,7 @@ namespace SalesWebApp.Controllers
                 return RedirectToAction(nameof(Error), new { Message = "Id not found" });
             }
 
-            List<Department> departments = _departmentService.FindALl();
+            List<Department> departments = await  _departmentService.FindAllAsync();
             SellerFormViewModel viewModel = new SellerFormViewModel { Seller = obj, Departments = departments };
 
             return View(viewModel);
